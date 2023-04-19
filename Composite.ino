@@ -5,13 +5,13 @@
 
 
 // Pins
-#define DHTpin 6 // DHT22 on D2
-#define ultrasonicEcho 5 // ultrasonic echo at D5
-#define ultrasonicTrigger 4 // ultrasonic trigger at D4
-#define moisturePowerLevel 7
-#define ledPin 9 // Photoresistor LED at D9
-#define RE 12
-#define DE 11
+#define DHTpin 22 // DHT22 on D2
+#define ultrasonicEcho 24 // ultrasonic echo at D5
+#define ultrasonicTrigger 26 // ultrasonic trigger at D4
+#define moisturePowerLevel 28
+#define ledPin 9 // Photoresistor LED at D9 Debugging
+#define RE 30
+#define DE 32
 
 #define pResistor A1 // Photoresistor at A1
 #define moisturePin A0 // MoisturePin at A0
@@ -28,8 +28,8 @@ dht DHT; // Creats a DHT object
 //SoftwareSerial mySerial(2, 3); // RX, TX
 byte values[11];
 //SoftwareSerial mod(13, 10);
-AltSoftSerial altSerial;
-SoftwareSerial mySerial(2, 3);
+//AltSoftSerial altSerial;
+SoftwareSerial mySerial(53, 51);
 
 // array holding the serial data
 float data_read[5]; //dist, photo, t, h, mois
@@ -40,13 +40,15 @@ float data_read[5]; //dist, photo, t, h, mois
 void setup() {
   // initialize serial ports and pinse
   Serial.begin(9600);
+//  Serial1.begin(9600);
+  Serial3.begin(9600);
   //mod.begin(19200);
-  altSerial.begin(19200);
+//  altSerial.begin(19200);
   mySerial.begin(9600);
-  mySerial.print("\n\r\n\r");
+  Serial3.print("\n\r\n\r");
 //   Set into bypass mode for zigbee
   delay(1000);
-  mySerial.print("B");
+  Serial3.print("B");
   delay(1000);
   
   // Set pin modes
@@ -166,6 +168,7 @@ void loop() {
   // Print values to the serial monitor
   Serial.print("Nitrogen: ");
   Serial.print(val1);
+  
   Serial.println(" mg/kg");
   
   Serial.print("Phosphorous: ");
@@ -181,14 +184,14 @@ void loop() {
   //mySerial.println(data_read);
   //Serial debuging
   //mySerial.println(distance);
-  mySerial.println(scaled_dist);
-  mySerial.println(photoresistorValue);
-  mySerial.println(scaled_t);
-  mySerial.println(scaled_h);
-  mySerial.println(moisture);
-  mySerial.println(val1);
-  mySerial.println(val2);
-  mySerial.println(val3);
+  Serial3.println(scaled_dist);
+  Serial3.println(photoresistorValue);
+  Serial3.println(scaled_t);
+  Serial3.println(scaled_h);
+  Serial3.println(moisture);
+  Serial3.println(val1);
+  Serial3.println(val2);
+  Serial3.println(val3);
   
   //wait for next loop
   Serial.println("");
@@ -213,12 +216,12 @@ byte nitrogen(){
   digitalWrite(DE,HIGH);
   digitalWrite(RE,HIGH);
   delay(10);
-  if(altSerial.write(nitro,sizeof(nitro))==8){
+  if(mySerial.write(nitro,sizeof(nitro))==8){
     digitalWrite(DE,LOW);
     digitalWrite(RE,LOW);
     for(byte i=0;i<7;i++){
     //Serial.print(mod.read(),HEX);
-    values[i] = altSerial.read();
+    values[i] = mySerial.read();
     //Serial.print(values[i],HEX);
     }
     //Serial.println();
@@ -230,12 +233,12 @@ byte phosphorous(){
   digitalWrite(DE,HIGH);
   digitalWrite(RE,HIGH);
   delay(10);
-  if(altSerial.write(phos,sizeof(phos))==8){
+  if(mySerial.write(phos,sizeof(phos))==8){
     digitalWrite(DE,LOW);
     digitalWrite(RE,LOW);
     for(byte i=0;i<7;i++){
     //Serial.print(mod.read(),HEX);
-    values[i] = altSerial.read();
+    values[i] = mySerial.read();
     //Serial.print(values[i],HEX);
     }
     //Serial.println();
@@ -247,12 +250,12 @@ byte potassium(){
   digitalWrite(DE,HIGH);
   digitalWrite(RE,HIGH);
   delay(10);
-  if(altSerial.write(pota,sizeof(pota))==8){
+  if(mySerial.write(pota,sizeof(pota))==8){
     digitalWrite(DE,LOW);
     digitalWrite(RE,LOW);
     for(byte i=0;i<7;i++){
     //Serial.print(mod.read(),HEX);
-    values[i] = altSerial.read();
+    values[i] = mySerial.read();
     //Serial.print(values[i],HEX);
     }
     //Serial.println();
